@@ -319,3 +319,68 @@ SELECT * FROM HCLS_DB.RAW_SCHEMA.PATIENTS_RAW LIMIT 5;
 SELECT * FROM HCLS_DB.RAW_SCHEMA.ENCOUNTERS_RAW LIMIT 5;
 SELECT * FROM HCLS_DB.RAW_SCHEMA.LAB_RESULTS_RAW LIMIT 5;
 SELECT * FROM HCLS_DB.RAW_SCHEMA.MEDICATIONS_RAW LIMIT 5;
+
+INSERT INTO HCLS_DB.RAW_SCHEMA.ENCOUNTERS_RAW 
+(encounter_id, patient_id, physician_id, facility_id, admission_date, discharge_date, 
+ encounter_type, chief_complaint, diagnosis_code, diagnosis_description, department, load_timestamp)
+VALUES
+-- Patient 1001: Readmitted 10 days after first visit (Dyspnea worsening)
+(31, 1001, 1, 1, '2024-12-25 08:00:00', '2024-12-27 14:00:00', 'Inpatient', 'Worsening shortness of breath', 'R06.00', 'Dyspnea unspecified', 'Internal Medicine', CURRENT_TIMESTAMP()),
+
+-- Patient 1002: Readmitted 5 days after emergency (Chest pain returned)
+(32, 1002, 2, 2, '2024-11-25 14:30:00', '2024-11-26 10:00:00', 'Emergency', 'Recurring chest pain', 'I20.9', 'Angina pectoris unspecified', 'Cardiology', CURRENT_TIMESTAMP()),
+
+-- Patient 1002: Third visit 15 days after second (Cardiac workup)
+(33, 1002, 2, 2, '2024-12-10 09:00:00', '2024-12-12 16:00:00', 'Inpatient', 'Scheduled cardiac catheterization', 'I25.10', 'Coronary artery disease', 'Cardiology', CURRENT_TIMESTAMP()),
+
+-- Patient 1005: Readmitted 20 days after back surgery (Post-op complication)
+(34, 1005, 5, 5, '2024-09-25 11:00:00', '2024-09-28 15:00:00', 'Inpatient', 'Post-surgical infection', 'T81.4', 'Infection following procedure', 'Orthopedics', CURRENT_TIMESTAMP()),
+
+-- Patient 1007: Readmitted 7 days after (Cancer treatment complication)
+(35, 1007, 7, 7, '2024-07-22 06:00:00', '2024-07-25 12:00:00', 'Emergency', 'Severe fatigue and fever', 'D70.9', 'Neutropenia unspecified', 'Oncology', CURRENT_TIMESTAMP()),
+
+-- Patient 1010: Readmitted 12 days after (Abnormal test results)
+(36, 1010, 10, 10, '2024-05-15 10:00:00', '2024-05-17 14:00:00', 'Inpatient', 'Follow-up for abnormal labs', 'R79.9', 'Abnormal finding of blood chemistry', 'Internal Medicine', CURRENT_TIMESTAMP()),
+
+-- Patient 1012: Readmitted 8 days after emergency (Cardiac event)
+(37, 1012, 12, 2, '2024-03-18 22:00:00', '2024-03-21 10:00:00', 'Emergency', 'Acute chest pain radiating to arm', 'I21.9', 'Acute myocardial infarction', 'Emergency', CURRENT_TIMESTAMP()),
+
+-- Patient 1014: Readmitted 14 days after (Persistent abdominal pain)
+(38, 1014, 14, 4, '2024-02-03 15:00:00', '2024-02-05 11:00:00', 'Inpatient', 'Continued abdominal pain', 'K35.80', 'Acute appendicitis', 'Primary Care', CURRENT_TIMESTAMP()),
+
+-- Patient 1015: Readmitted 3 days after (Severe back pain recurrence)
+(39, 1015, 15, 5, '2023-12-31 08:00:00', '2024-01-02 16:00:00', 'Emergency', 'Acute back pain flare', 'M54.5', 'Low back pain', 'Orthopedics', CURRENT_TIMESTAMP()),
+
+-- Patient 1001: Third visit 28 days after second (Follow-up)
+(40, 1001, 1, 1, '2025-01-22 09:00:00', '2025-01-22 11:00:00', 'Outpatient', 'Follow-up respiratory check', 'R06.00', 'Dyspnea unspecified', 'Internal Medicine', CURRENT_TIMESTAMP());
+
+SELECT * FROM HCLS_DB.RAW_SCHEMA.ENCOUNTERS_RAW;
+SELECT * FROM HCLS_DB.RAW_SCHEMA.PATIENTS_RAW;
+
+-- =============================================================================
+-- PATIENTS WITH MULTIPLE ENCOUNTERS (>1)
+-- =============================================================================
+SELECT 
+    p.patient_id,
+    p.first_name,
+    p.last_name,
+    p.date_of_birth,
+    p.gender,
+    p.city,
+    p.state,
+    p.insurance_id,
+    enc.encounter_count,
+    enc.first_visit,
+    enc.last_visit
+FROM HCLS_DB.RAW_SCHEMA.PATIENTS_RAW p
+INNER JOIN (
+    SELECT 
+        patient_id,
+        COUNT(*) AS encounter_count,
+        MIN(admission_date) AS first_visit,
+        MAX(admission_date) AS last_visit
+    FROM HCLS_DB.RAW_SCHEMA.ENCOUNTERS_RAW
+    GROUP BY patient_id
+    HAVING COUNT(*) > 1
+) enc ON p.patient_id = enc.patient_id
+ORDER BY enc.encounter_count DESC;
