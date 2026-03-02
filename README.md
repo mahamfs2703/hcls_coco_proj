@@ -24,12 +24,3 @@ Key Questions:
 
 Built a healthcare analytics pipeline to identify high-risk patients for 30-day readmission, reduce CMS penalties, and improve clinical quality metrics using a multi-layered data warehouse architecture.
 
-RAW_SCHEMA                    TRANSFORM_SCHEMA                 ANALYTICS_SCHEMA
-┌─────────────────┐          ┌──────────────────────┐         ┌─────────────────────┐
-│ PATIENTS_RAW    │    →     │ DIM_PATIENTS         │    →    │ READMISSION_METRICS │
-│ ENCOUNTERS_RAW  │    →     │ DIM_FACILITIES       │    →    │ FACILITY_SCORECARD  │
-│ FACILITIES_RAW  │    →     │ DIM_PHYSICIANS       │    →    │ PHYSICIAN_QUALITY   │
-│ PHYSICIANS_RAW  │    →     │ FACT_ENCOUNTERS      │    →    │ DIAGNOSIS_ANALYSIS  │
-│ LAB_RESULTS_RAW │    →     │ FACT_LAB_RESULTS     │         └─────────────────────┘
-│ MEDICATIONS_RAW │    →     │ FACT_MEDICATIONS     │
-└─────────────────┘          └──────────────────────┘
