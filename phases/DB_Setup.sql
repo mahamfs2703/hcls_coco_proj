@@ -21,9 +21,9 @@ grant select on all tables in schema HCLS_DB.TRANSFORM_SCHEMA to role TRANSFORM_
 grant select on future tables in schema HCLS_DB.TRANSFORM_SCHEMA to role TRANSFORM_ROLE;
 
 --GRANTING PRIVILES ON ANALYTICS SCHEMA
-grant usage on schema HCLS_DB.ANALYTICS_SCHEMA to role REPORTING_ROLE;
-grant select on all tables in schema HCLS_DB.ANALYTICS_SCHEMA to role REPORTING_ROLE;
-grant select on future tables in schema HCLS_DB.ANALYTICS_SCHEMA to role REPORTING_ROLE;
+grant usage on schema HCLS_DB.ANALYTICS_SCHEMA to role ANALYST_ROLE;
+grant select on all tables in schema HCLS_DB.ANALYTICS_SCHEMA to role ANALYST_ROLE;
+grant select on future tables in schema HCLS_DB.ANALYTICS_SCHEMA to role ANALYST_ROLE;
 
 --GRANTING PRIVILES TO DATA ENGINEER ROLE
 --BRONZE LAYER
